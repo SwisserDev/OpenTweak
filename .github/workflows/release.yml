@@ -31,6 +31,7 @@ jobs:
       - name: Generate changelog
         id: changelog
         uses: requarks/changelog-action@v1
+        continue-on-error: true
         with:
           token: ${{ github.token }}
           tag: ${{ github.ref_name }}
@@ -38,7 +39,15 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          body: ${{ steps.changelog.outputs.changes }}
+          body: |
+            ${{ steps.changelog.outputs.changes || '## What''s New
+
+            See the [full documentation](https://github.com/SwisserDev/OpenTweak#features) for details on all tweaks.
+
+            ### Installation
+            1. Download `OpenTweak.exe` below
+            2. Run as Administrator
+            3. Done!' }}
           files: publish/OpenTweak.exe
           draft: false
           prerelease: false
