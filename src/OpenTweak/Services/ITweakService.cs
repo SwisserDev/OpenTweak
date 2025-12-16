@@ -60,39 +60,67 @@ public abstract class TweakServiceBase : ITweakService
 }
 
 /// <summary>
-/// Simple logger to track all tweak operations for transparency.
+/// Logger to track all tweak operations with visual status levels.
 /// </summary>
 public class TweakLogger
 {
     public static TweakLogger Instance { get; } = new();
 
     private readonly List<LogEntry> _entries = new();
+    private const int MaxEntries = 100;
 
     public IReadOnlyList<LogEntry> Entries => _entries.AsReadOnly();
 
     public event Action<LogEntry>? OnLog;
 
-    public void Log(string tweakId, string message)
+    /// <summary>
+    /// Log with full control over all parameters.
+    /// </summary>
+    public void Log(string tweakId, string tweakName, string message, LogLevel level = LogLevel.Info)
     {
         var entry = new LogEntry
         {
             Timestamp = DateTime.Now,
             TweakId = tweakId,
-            Message = message
+            TweakName = tweakName,
+            Message = message,
+            Level = level
         };
+
         _entries.Add(entry);
+
+        // Keep list bounded
+        while (_entries.Count > MaxEntries)
+            _entries.RemoveAt(0);
+
         OnLog?.Invoke(entry);
     }
+
+    /// <summary>
+    /// Legacy log method for backward compatibility.
+    /// </summary>
+    public void Log(string tweakId, string message)
+    {
+        Log(tweakId, tweakId, message, LogLevel.Info);
+    }
+
+    public void LogSuccess(string tweakId, string tweakName, string message)
+        => Log(tweakId, tweakName, message, LogLevel.Success);
+
+    public void LogError(string tweakId, string tweakName, string message)
+        => Log(tweakId, tweakName, message, LogLevel.Error);
+
+    public void LogWarning(string tweakId, string tweakName, string message)
+        => Log(tweakId, tweakName, message, LogLevel.Warning);
+
+    public void LogProgress(string tweakId, string tweakName, string message)
+        => Log(tweakId, tweakName, message, LogLevel.Progress);
+
+    public void LogInfo(string tweakId, string tweakName, string message)
+        => Log(tweakId, tweakName, message, LogLevel.Info);
 
     public void Clear() => _entries.Clear();
 
     public string Export() => string.Join(Environment.NewLine,
-        _entries.Select(e => $"[{e.Timestamp:HH:mm:ss}] [{e.TweakId}] {e.Message}"));
-}
-
-public class LogEntry
-{
-    public DateTime Timestamp { get; init; }
-    public required string TweakId { get; init; }
-    public required string Message { get; init; }
+        _entries.Select(e => $"[{e.Timestamp:HH:mm:ss}] [{e.Level}] [{e.TweakId}] {e.Message}"));
 }

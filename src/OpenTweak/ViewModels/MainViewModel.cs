@@ -13,7 +13,6 @@ namespace OpenTweak.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private bool _isOptimizing;
-    private string _logText = string.Empty;
     private bool _showLog;
     private TweakItemViewModel? _selectedTweak;
 
@@ -70,17 +69,28 @@ public class MainViewModel : ViewModelBase
         // Auto-select first tweak
         SelectedTweak = Tweaks.FirstOrDefault();
 
+        // Initialize log entries collection
+        LogEntries = new ObservableCollection<LogEntryViewModel>();
+
         // Subscribe to log events
         TweakLogger.Instance.OnLog += entry =>
         {
-            LogText += $"[{entry.Timestamp:HH:mm:ss}] [{entry.TweakId}] {entry.Message}\n";
+            // Ensure we're on UI thread
+            System.Windows.Application.Current?.Dispatcher.Invoke(() =>
+            {
+                LogEntries.Add(new LogEntryViewModel(entry));
+
+                // Keep max 50 entries in UI
+                while (LogEntries.Count > 50)
+                    LogEntries.RemoveAt(0);
+            });
         };
 
         // Check admin rights
         IsAdmin = ProcessHelper.IsAdministrator();
         if (!IsAdmin)
         {
-            LogText = "WARNING: Not running as Administrator. Some tweaks may fail.\n\n";
+            TweakLogger.Instance.LogWarning("system", "System", "Not running as Administrator. Some tweaks may fail.");
         }
     }
 
@@ -102,11 +112,7 @@ public class MainViewModel : ViewModelBase
 
     public string OptimizeButtonText => IsOptimizing ? "OPTIMIZING..." : "OPTIMIZE";
 
-    public string LogText
-    {
-        get => _logText;
-        private set => SetProperty(ref _logText, value);
-    }
+    public ObservableCollection<LogEntryViewModel> LogEntries { get; private set; }
 
     public bool ShowLog
     {
@@ -151,9 +157,11 @@ public class MainViewModel : ViewModelBase
         try
         {
             IsOptimizing = true;
-            ShowLog = true; // Auto-show log for feedback
+            ShowLog = true;
             TweakLogger.Instance.Clear();
-            LogText = "=== Starting Optimization ===\n\n";
+            LogEntries.Clear();
+
+            TweakLogger.Instance.LogInfo("system", "Optimization", "Starting optimization...");
 
             var enabledTweaks = Tweaks.Where(t => t.IsEnabled).ToList();
             int success = 0;
@@ -161,24 +169,26 @@ public class MainViewModel : ViewModelBase
 
             foreach (var tweak in enabledTweaks)
             {
-                LogText += $"Applying: {tweak.Info.Name}...\n";
+                TweakLogger.Instance.LogProgress(tweak.Info.Id, tweak.Info.Name, "Applying...");
                 var result = await tweak.ApplyAsync();
 
                 if (result.Success)
                 {
-                    LogText += $"  ✓ {result.Message}\n";
+                    TweakLogger.Instance.LogSuccess(tweak.Info.Id, tweak.Info.Name, result.Message);
                     success++;
                 }
                 else
                 {
-                    LogText += $"  ✗ {result.Message}\n";
-                    if (result.ErrorDetails != null)
-                        LogText += $"    Details: {result.ErrorDetails}\n";
+                    var errorMsg = result.ErrorDetails != null
+                        ? $"{result.Message} - {result.ErrorDetails}"
+                        : result.Message;
+                    TweakLogger.Instance.LogError(tweak.Info.Id, tweak.Info.Name, errorMsg);
                     failed++;
                 }
             }
 
-            LogText += $"\n=== Done: {success} applied, {failed} failed ===\n";
+            TweakLogger.Instance.LogInfo("system", "Optimization",
+                $"Complete: {success} applied, {failed} failed");
         }
         finally
         {
@@ -192,18 +202,21 @@ public class MainViewModel : ViewModelBase
         {
             IsOptimizing = true;
             ShowLog = true;
-            LogText = "=== Reverting All Tweaks ===\n\n";
+
+            TweakLogger.Instance.LogInfo("system", "Revert", "Reverting all tweaks...");
 
             foreach (var tweak in Tweaks.Where(t => t.IsApplied))
             {
-                LogText += $"Reverting: {tweak.Info.Name}...\n";
+                TweakLogger.Instance.LogProgress(tweak.Info.Id, tweak.Info.Name, "Reverting...");
                 var result = await tweak.RevertAsync();
-                LogText += result.Success
-                    ? $"  ✓ {result.Message}\n"
-                    : $"  ✗ {result.Message}\n";
+
+                if (result.Success)
+                    TweakLogger.Instance.LogSuccess(tweak.Info.Id, tweak.Info.Name, result.Message);
+                else
+                    TweakLogger.Instance.LogError(tweak.Info.Id, tweak.Info.Name, result.Message);
             }
 
-            LogText += "\n=== Revert Complete ===\n";
+            TweakLogger.Instance.LogInfo("system", "Revert", "Revert complete");
         }
         finally
         {
@@ -217,11 +230,14 @@ public class MainViewModel : ViewModelBase
         {
             IsOptimizing = true;
             ShowLog = true;
-            LogText += "\n--- Cleaning FiveM Cache ---\n";
+
+            TweakLogger.Instance.LogProgress("cache", "Cache Cleaner", "Cleaning FiveM cache...");
             var result = await CacheCleanerTweak.ApplyAsync();
-            LogText += result.Success
-                ? $"✓ {result.Message}\n"
-                : $"✗ {result.Message}\n";
+
+            if (result.Success)
+                TweakLogger.Instance.LogSuccess("cache", "Cache Cleaner", result.Message);
+            else
+                TweakLogger.Instance.LogError("cache", "Cache Cleaner", result.Message);
         }
         finally
         {
@@ -235,11 +251,14 @@ public class MainViewModel : ViewModelBase
         {
             IsOptimizing = true;
             ShowLog = true;
-            LogText += "\n--- Cleaning RAM ---\n";
+
+            TweakLogger.Instance.LogProgress("ram", "RAM Cleaner", "Cleaning memory...");
             var result = await RamCleanerTweak.ApplyAsync();
-            LogText += result.Success
-                ? $"✓ {result.Message}\n"
-                : $"✗ {result.Message}\n";
+
+            if (result.Success)
+                TweakLogger.Instance.LogSuccess("ram", "RAM Cleaner", result.Message);
+            else
+                TweakLogger.Instance.LogError("ram", "RAM Cleaner", result.Message);
         }
         finally
         {
@@ -253,8 +272,8 @@ public class MainViewModel : ViewModelBase
             Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             $"OpenTweak_Log_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.txt");
 
-        File.WriteAllText(path, LogText);
-        LogText += $"\n✓ Log exported to: {path}\n";
+        File.WriteAllText(path, TweakLogger.Instance.Export());
+        TweakLogger.Instance.LogSuccess("system", "Export", $"Log exported to Desktop");
     }
 
     private void OpenGitHub()
