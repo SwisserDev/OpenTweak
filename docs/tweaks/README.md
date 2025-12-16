@@ -62,6 +62,7 @@ Complete documentation for all OpenTweak optimizations. Each tweak is rated hone
 | Tool | Impact | Description |
 |------|--------|-------------|
 | [Cache Cleaner](cache-cleaner.md) | ✅ Effective | Clears FiveM cache and logs |
+| [Shader Cache Cleaner](shader-cache-cleaner.md) | ✅ Effective | Clears GPU shader caches |
 | [RAM Cleaner](ram-cleaner.md) | ⚠️ Minimal | Clears Windows standby memory |
 
 ---
@@ -76,6 +77,7 @@ Complete documentation for all OpenTweak optimizations. Each tweak is rated hone
 - Startup Delay Remove (faster boot on SSDs)
 - Windowed Optimizations (Win11 only, real latency reduction)
 - Cache Cleaner (fixes corrupted assets)
+- Shader Cache Cleaner (fixes stuttering after driver updates)
 
 **Situational:**
 - Ultimate Performance (laptops, older hardware)
