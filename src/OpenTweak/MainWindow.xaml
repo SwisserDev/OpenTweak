@@ -233,6 +233,8 @@
                             IsEnabled="{Binding IsOptimizing, Converter={StaticResource InvertBool}}"/>
                     <Button Content="Clean Cache" Style="{StaticResource SecondaryButton}"
                             Command="{Binding CleanCacheCommand}" Margin="8,0,0,0"/>
+                    <Button Content="Clean Shaders" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding CleanShadersCommand}" Margin="8,0,0,0"/>
                     <Button Content="Clean RAM" Style="{StaticResource SecondaryButton}"
                             Command="{Binding CleanRamCommand}" Margin="8,0,0,0"/>
                     <Button Content="Restore All" Style="{StaticResource SecondaryButton}"

@@ -17,16 +17,20 @@ Clears temporary files from FiveM's data directory. This is actually one of the 
 **Directories cleaned:**
 ```
 %LocalAppData%\FiveM\FiveM.app\
-├── cache/      - Temporary game assets (safe to delete)
-├── crashes/    - Crash dump files
-└── logs/       - Log files
+├── cache/             - Temporary game assets (textures, resources)
+├── crashes/           - Crash dump files
+├── logs/              - Log files
+├── citizen/           - Citizen framework files (common error source)
+├── nui-storage/       - NUI browser cache (UI data)
+└── server-cache-priv/ - Server-specific cached data
 ```
 
 **What gets deleted:**
 - Downloaded server resources (re-downloaded on next connect)
-- Compiled shaders (rebuilt automatically)
-- Crash reports (only useful for debugging)
-- Old log files
+- Compiled citizen scripts (rebuilt automatically)
+- NUI/browser storage (UI state, cookies)
+- Server-specific cache files
+- Crash reports and log files
 
 ## The Reality
 
@@ -35,6 +39,8 @@ Clears temporary files from FiveM's data directory. This is actually one of the 
 - "Failed to load resource" errors
 - Crashes after server updates
 - Stuck on loading screen
+- NUI/UI not displaying correctly
+- Connection issues to specific servers
 - General FiveM weirdness
 
 **Why it works:**

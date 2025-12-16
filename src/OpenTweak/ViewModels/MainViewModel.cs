@@ -54,12 +54,14 @@ public class MainViewModel : ViewModelBase
 
         // Utility tools (one-time actions)
         CacheCleanerTweak = new TweakItemViewModel(new CacheCleanerService());
+        ShaderCleanerTweak = new TweakItemViewModel(new ShaderCacheCleanerService());
         RamCleanerTweak = new TweakItemViewModel(new RamCleanerService());
 
         // Commands
         OptimizeAllCommand = new AsyncRelayCommand(OptimizeAllAsync, () => !IsOptimizing);
         RevertAllCommand = new AsyncRelayCommand(RevertAllAsync, () => !IsOptimizing);
         CleanCacheCommand = new AsyncRelayCommand(CleanCacheAsync, () => !IsOptimizing);
+        CleanShadersCommand = new AsyncRelayCommand(CleanShadersAsync, () => !IsOptimizing);
         CleanRamCommand = new AsyncRelayCommand(CleanRamAsync, () => !IsOptimizing);
         ToggleLogCommand = new RelayCommand(() => ShowLog = !ShowLog);
         ExportLogCommand = new RelayCommand(ExportLog);
@@ -96,6 +98,7 @@ public class MainViewModel : ViewModelBase
 
     public ObservableCollection<TweakItemViewModel> Tweaks { get; }
     public TweakItemViewModel CacheCleanerTweak { get; }
+    public TweakItemViewModel ShaderCleanerTweak { get; }
     public TweakItemViewModel RamCleanerTweak { get; }
 
     public bool IsAdmin { get; }
@@ -146,6 +149,7 @@ public class MainViewModel : ViewModelBase
     public ICommand OptimizeAllCommand { get; }
     public ICommand RevertAllCommand { get; }
     public ICommand CleanCacheCommand { get; }
+    public ICommand CleanShadersCommand { get; }
     public ICommand CleanRamCommand { get; }
     public ICommand ToggleLogCommand { get; }
     public ICommand ExportLogCommand { get; }
@@ -238,6 +242,27 @@ public class MainViewModel : ViewModelBase
                 TweakLogger.Instance.LogSuccess("cache", "Cache Cleaner", result.Message);
             else
                 TweakLogger.Instance.LogError("cache", "Cache Cleaner", result.Message);
+        }
+        finally
+        {
+            IsOptimizing = false;
+        }
+    }
+
+    private async Task CleanShadersAsync()
+    {
+        try
+        {
+            IsOptimizing = true;
+            ShowLog = true;
+
+            TweakLogger.Instance.LogProgress("shaders", "Shader Cleaner", "Cleaning shader caches...");
+            var result = await ShaderCleanerTweak.ApplyAsync();
+
+            if (result.Success)
+                TweakLogger.Instance.LogSuccess("shaders", "Shader Cleaner", result.Message);
+            else
+                TweakLogger.Instance.LogError("shaders", "Shader Cleaner", result.Message);
         }
         finally
         {

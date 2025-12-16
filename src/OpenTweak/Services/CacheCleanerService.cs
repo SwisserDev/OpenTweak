@@ -17,23 +17,31 @@ public class CacheCleanerService : TweakServiceBase
         Description = "Deletes FiveM cache, crash dumps, and log files",
         Category = "Cleanup",
         TechnicalDetails = """
-            Clears the following FiveM directories:
-            - cache/ (temporary files, will be rebuilt on next launch)
+            Clears FiveM directories that can cause issues:
+            - cache/ (textures, assets - rebuilt on next launch)
             - crashes/ (crash dump files)
             - logs/ (log files)
+            - citizen/ (Citizen framework - common error source)
+            - nui-storage/ (NUI browser cache)
+            - server-cache-priv/ (server-specific cache)
 
-            This is actually useful:
-            - Can fix texture/asset issues caused by corrupted cache
-            - Frees up disk space
-            - Safe to do - FiveM rebuilds cache automatically
+            When to use:
+            - Texture/asset issues or corrupted visuals
+            - After FiveM updates
+            - Connection problems to specific servers
+            - NUI/UI glitches
 
-            Note: First launch after cleaning may take longer as cache rebuilds.
+            Safe to do - FiveM rebuilds everything automatically.
+            First launch after cleaning will take longer.
             """,
         WhatItDoes = """
             Deletes contents of:
             %localappdata%\FiveM\FiveM.app\cache\
             %localappdata%\FiveM\FiveM.app\crashes\
             %localappdata%\FiveM\FiveM.app\logs\
+            %localappdata%\FiveM\FiveM.app\citizen\
+            %localappdata%\FiveM\FiveM.app\nui-storage\
+            %localappdata%\FiveM\FiveM.app\server-cache-priv\
             """,
         Effectiveness = EffectivenessRating.Effective,
         RecommendedByDefault = false, // On-demand action, not persistent
@@ -44,7 +52,15 @@ public class CacheCleanerService : TweakServiceBase
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "FiveM", "FiveM.app");
 
-    private static readonly string[] CacheFolders = { "cache", "crashes", "logs" };
+    private static readonly string[] CacheFolders =
+    {
+        "cache",              // Standard cache (textures, assets)
+        "crashes",            // Crash dump files
+        "logs",               // Log files
+        "citizen",            // Citizen framework (common error source)
+        "nui-storage",        // NUI browser cache
+        "server-cache-priv",  // Server-specific cache
+    };
 
     public override Task<bool> IsAppliedAsync()
     {

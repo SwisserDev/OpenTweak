@@ -33,6 +33,7 @@ Every tweak shows what it actually does, with honest effectiveness ratings.
 | [Timer Resolution](docs/tweaks/timer-resolution.md) | System | ✅ Effective | Sets Windows timer to 0.5ms |
 | [Mouse Acceleration Fix](docs/tweaks/mouse-acceleration.md) | Input | ✅ Effective | Removes acceleration for 1:1 input |
 | [FiveM Cache Cleaner](docs/tweaks/cache-cleaner.md) | Cleanup | ✅ Effective | Clears cache, crashes, logs |
+| [Shader Cache Cleaner](docs/tweaks/shader-cache-cleaner.md) | Cleanup | ✅ Effective | Clears GPU shader caches |
 | [VBS Disable](docs/tweaks/vbs-disable.md) | Security | ✅ Effective | Disables Virtualization-Based Security |
 | [Power Throttling](docs/tweaks/power-throttling.md) | Power | ✅ Effective | Disables CPU power throttling |
 | [Ultimate Performance](docs/tweaks/power-plan.md) | Power | ⚠️ Minimal | Hidden high-performance power plan |
