@@ -33,10 +33,19 @@ Every tweak shows what it actually does, with honest effectiveness ratings.
 | [Timer Resolution](docs/tweaks/timer-resolution.md) | System | ✅ Effective | Sets Windows timer to 0.5ms |
 | [Mouse Acceleration Fix](docs/tweaks/mouse-acceleration.md) | Input | ✅ Effective | Removes acceleration for 1:1 input |
 | [FiveM Cache Cleaner](docs/tweaks/cache-cleaner.md) | Cleanup | ✅ Effective | Clears cache, crashes, logs |
+| [VBS Disable](docs/tweaks/vbs-disable.md) | Security | ✅ Effective | Disables Virtualization-Based Security |
+| [Power Throttling](docs/tweaks/power-throttling.md) | Power | ✅ Effective | Disables CPU power throttling |
 | [Ultimate Performance](docs/tweaks/power-plan.md) | Power | ⚠️ Minimal | Hidden high-performance power plan |
 | [Game DVR Disable](docs/tweaks/game-dvr.md) | Windows | ⚠️ Minimal | Disables Xbox Game Bar |
 | [GPU Priority](docs/tweaks/gpu-priority.md) | GPU | ⚠️ Minimal | Forces dedicated GPU for GTA V |
+| [HAGS](docs/tweaks/hags.md) | GPU | ⚠️ Minimal | Hardware Accelerated GPU Scheduling |
+| [Windowed Optimizations](docs/tweaks/windowed-optimizations.md) | GPU | ⚠️ Minimal | Disables DWM optimizations for games |
 | [FSO Disable](docs/tweaks/fso-disable.md) | System | ⚠️ Minimal | Disables Fullscreen Optimizations |
+| [System Responsiveness](docs/tweaks/system-responsiveness.md) | System | ⚠️ Minimal | Prioritizes foreground applications |
+| [Game Priority](docs/tweaks/game-priority.md) | CPU | ⚠️ Minimal | Sets game process priority in registry |
+| [Startup Delay](docs/tweaks/startup-delay.md) | System | ⚠️ Minimal | Removes Windows startup delay |
+| [Visual Effects](docs/tweaks/visual-effects.md) | System | ⚠️ Minimal | Disables animations and effects |
+| [Service Manager](docs/tweaks/service-manager.md) | System | ⚠️ Minimal | Disables unnecessary Windows services |
 | [Debloater](docs/tweaks/debloater.md) | System | ⚠️ Minimal | Disables telemetry services |
 | [RAM Cleaner](docs/tweaks/ram-cleaner.md) | Memory | ⚠️ Minimal | Clears standby memory |
 | [TCP Optimizer](docs/tweaks/network-tcp.md) | Network | ❌ Placebo | Disables Nagle's Algorithm |
