@@ -12,11 +12,9 @@
 
 Commercial optimization tools charge $30-60 for simple Windows tweaks. OpenTweak does the same things - completely transparent, showing you exactly what each tweak does and whether it actually helps.
 
-<!--
 ## Screenshot
 
-![OpenTweak Screenshot](docs/screenshot.png)
--->
+![OpenTweak Screenshot](docs/tweaks/screenshot.png)
 
 ## Download
 
