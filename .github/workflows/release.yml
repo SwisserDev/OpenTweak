@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 1.0.1)'
+        required: true
+        type: string
 
 jobs:
   release:
@@ -16,6 +22,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Create tag (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag v${{ inputs.version }}
+          git push origin v${{ inputs.version }}
+
+      - name: Set version
+        id: version
+        run: |
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            echo "VERSION=v${{ inputs.version }}" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "VERSION=${{ github.ref_name }}" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -34,11 +58,12 @@ jobs:
         continue-on-error: true
         with:
           token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
+          tag: ${{ steps.version.outputs.VERSION }}
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.VERSION }}
           body: |
             ${{ steps.changelog.outputs.changes || '## What''s New
 
