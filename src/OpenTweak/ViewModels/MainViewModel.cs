@@ -19,27 +19,38 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        // Initialize all tweak services (3x4 grid = 11 tweaks + 1 empty slot)
+        // Initialize all tweak services (4x5 grid = 20 tweaks)
         Tweaks = new ObservableCollection<TweakItemViewModel>
         {
-            // Row 1: Core tweaks
+            // Row 1: Power & Performance
             new(new PowerPlanService()),
+            new(new PowerThrottlingService()),
             new(new TimerResolutionService()),
+            new(new VbsDisableService()),
+
+            // Row 2: GPU & Graphics
             new(new GpuPriorityService()),
-
-            // Row 2: Core tweaks
-            new(new CpuParkingService()),
-            new(new NetworkTweakService()),
-            new(new DebloaterService()),
-
-            // Row 3: New useful + first placebo
+            new(new HagsService()),
             new(new GameDvrService()),
+            new(new WindowedOptimizationsService()),
+
+            // Row 3: System & CPU
+            new(new SystemResponsivenessService()),
+            new(new GamePriorityService()),
+            new(new CpuParkingService()),
+            new(new PriorityBoostService()),
+
+            // Row 4: Input & Windows
             new(new MouseAccelerationService()),
             new(new FsoDisableService()),
+            new(new StartupDelayService()),
+            new(new VisualEffectsService()),
 
-            // Row 4: Placebo tweaks (educational)
+            // Row 5: Network & Cleanup
+            new(new NetworkTweakService()),
             new(new NetworkThrottlingService()),
-            new(new PriorityBoostService()),
+            new(new DebloaterService()),
+            new(new ServiceManagerService()),
         };
 
         // Utility tools (one-time actions)

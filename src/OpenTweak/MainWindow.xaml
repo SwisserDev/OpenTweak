@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:OpenTweak.ViewModels"
         Title="OpenTweak"
-        Height="620" Width="950"
-        MinHeight="550" MinWidth="850"
+        Height="720" Width="1100"
+        MinHeight="650" MinWidth="950"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
         Background="{StaticResource BackgroundDarkBrush}">
@@ -50,7 +50,7 @@
         <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Tweaks}" Margin="16,16,8,16">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="3" Rows="4"/>
+                    <UniformGrid Columns="4" Rows="5"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
